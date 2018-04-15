@@ -11,8 +11,12 @@ LOGDIR = '/storage/emulated/0'
 droid = android.Android()
 droid.startLocating()
 
-print('--> Waiting 20 seconds for location service to start')
-sleep(20)
+
+now = datetime.now()
+secs_wait = now.seconds + (1000000 - now.microsecond)
+
+print('--> Waiting %5.2f seconds for location service to start' % (secs_wait))
+sleep(secs_wait)
 
 print('--> Starting to log')
 try:
@@ -24,13 +28,15 @@ try:
     data['timestamp'] = str(datetime.now())
 
     print(data)
+
+    # Save to log file
     with open(LOGDIR + '/gps_' + data['timestamp'][:10] + '.txt', 'a') as f:
       f.write(json.dumps(data))
 
     if not data['location']:
       # Error notification
       droid.vibrate()
-      droid.notify('Location Tracker','Failed to locate.')
+      droid.notify('Location Tracker', 'Failed to find location.')
 
     sleep(INTERVAL)
 except:
