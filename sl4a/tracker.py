@@ -13,9 +13,10 @@ droid.startLocating()
 
 
 now = datetime.now()
-secs_wait = now.seconds + (1000000 - now.microsecond)
+print('--> Waiting ca. 25 seconds for location service to start')
 
-print('--> Waiting %5.2f seconds for location service to start' % (secs_wait))
+# Make sure to wait until a nice time where the seconds are exact and modulo 5
+secs_wait = 20 + (5 - (now.seconds % 5) - 1) + (1000000 - now.microsecond) / 1000000
 sleep(secs_wait)
 
 print('--> Starting to log')
