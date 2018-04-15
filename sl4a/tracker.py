@@ -15,18 +15,19 @@ print('--> Waiting 20 seconds for location service to start')
 sleep(20)
 
 print('--> Starting to log')
-today = str(datetime.now())[:10]
-
 try:
   while True:
-    data = droid.readLocation().result
+    data = {}
+
+    data['location'] = droid.readLocation().result
+    # location data also contains timestamp, adding this one for redundancy
     data['timestamp'] = str(datetime.now())
 
     print(data)
-    with open(LOGDIR + '/gps_' + today + '.txt', 'a') as f:
+    with open(LOGDIR + '/gps_' + data['timestamp'][:10] + '.txt', 'a') as f:
       f.write(json.dumps(data))
 
-    if not data:
+    if not data['location']:
       # Error notification
       droid.vibrate()
       droid.notify('Location Tracker','Failed to locate.')
