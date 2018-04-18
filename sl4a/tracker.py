@@ -22,22 +22,21 @@ sleep(secs_wait)
 print('--> Starting to log')
 try:
   while True:
-    data = {}
+    data = droid.readLocation().result
 
-    data['location'] = droid.readLocation().result
+    if not data['location']:
+      # Error notification
+      droid.vibrate()
+      droid.notify('Location Tracker', 'Failed to find location.')
+
     # location data also contains timestamp, adding this one for redundancy
     data['timestamp'] = str(datetime.now())
 
     print(data)
 
     # Save to log file
-    with open(LOGDIR + '/gps_' + data['timestamp'][:10] + '.txt', 'a') as f:
-      f.write(json.dumps(data))
-
-    if not data['location']:
-      # Error notification
-      droid.vibrate()
-      droid.notify('Location Tracker', 'Failed to find location.')
+    with open(LOGDIR + '/tracker_' + data['timestamp'][:10] + '.txt', 'a') as f:
+      f.write('\n' + json.dumps(data))
 
     sleep(INTERVAL)
 except:
